@@ -10,7 +10,7 @@ r=requests.get('https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&
 if (r.status_code==200):
     data = r.json()
 else:
-    print "Error"
+    print ("Error")
 
 endtime=data["Meta Data"]["3. Last Refreshed"]
 interval=data["Meta Data"]["4. Interval"]
