@@ -18,20 +18,26 @@ timeseries=data["Time Series (15min)"]
 length=len(timeseries)
 
 # plt
-
 axes = plt.gca()
 axes.set_xlabel("Time")
 axes.set_ylabel("Price (Highs)")
 
-axes.set_xlim(xmin=0,xmax=300)
+axes.set_xlim(xmin=0,xmax=20)
 axes.set_ylim(ymin=90,ymax=100)
 
 # ["2018-05-02 16:00:00"]["2. high"]
 x = 0
 high = "2. high"
 for timestamp in timeseries:
+    # get values
     x = x+1
-    y = timeseries[timestamp][high]
+    y = float(timeseries[timestamp][high])
+
+    # limit output
+    if (x > 20):
+        break
+
+    # print values to terminal
     print ('(' + str(x) + ',' + str(y) + ')')
     plt.scatter(x, y)
 
