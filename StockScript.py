@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 key='AQXSQPCS64BZ2LPP'
 #Intraday, interval 15 minutes, length full
-r=requests.get('https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=MSFT&interval=15min&outputsize=full&apikey='+'AQXSQPCS64BZ2LPP')
+r=requests.get('https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=GOOGL&interval=15min&outputsize=full&apikey='+'AQXSQPCS64BZ2LPP')
 
 #status on request
 if (r.status_code==200):
@@ -19,18 +19,37 @@ length=len(timeseries)
 
 # plt
 axes = plt.gca()
-axes.set_xlim([0,300])
-axes.set_ylim([90,100])
+axes.set_xlabel("Time")
+axes.set_ylabel("Price (Highs)")
 
 # ["2018-05-02 16:00:00"]["2. high"]
+yhigh, ylow = -1, -1
 x = 0
 high = "2. high"
 for timestamp in timeseries:
+    # get values
     x = x+1
-    y = timeseries[timestamp][high]
+    y = float(timeseries[timestamp][high])
+
+    # limit output
+    if (x > 100):
+        break
+
+    # get range
+    if (yhigh == -1):
+        yhigh = y
+        ylow = y
+    elif (y > yhigh):
+        yhigh = y
+    elif (y < ylow):
+        ylow = y
+
+    # print values to terminal
     print ('(' + str(x) + ',' + str(y) + ')')
     plt.scatter(x, y)
 
+axes.set_xlim(xmin=0,xmax=100)
+axes.set_ylim(ymin=ylow,ymax=yhigh)
 plt.show()
 
 # error_config = {'ecolor': '0.3'}
