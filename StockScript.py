@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 key='AQXSQPCS64BZ2LPP'
 #Intraday, interval 15 minutes, length full
-r=requests.get('https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=GOOGL&interval=15min&outputsize=full&apikey='+'AQXSQPCS64BZ2LPP')
+stock="GOOGL"
+r=requests.get('https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol='+stock+'&interval=60min&outputsize=compact&apikey='+'AQXSQPCS64BZ2LPP')
 
 #status on request
 if (r.status_code==200):
@@ -14,7 +15,7 @@ else:
 
 endtime=data["Meta Data"]["3. Last Refreshed"]
 interval=data["Meta Data"]["4. Interval"]
-timeseries=data["Time Series (15min)"]
+timeseries=data["Time Series (60min)"]
 length=len(timeseries)
 
 # plt
@@ -45,9 +46,14 @@ for timestamp in timeseries:
         ylow = y
 
     # print values to terminal
-    print ('(' + str(x) + ',' + str(y) + ')')
+    #print ('(' + str(x) + ',' + str(y) + ')')
     plt.scatter(x, y)
-
+font = {'family': 'serif',
+        'color':  'darkred',
+        'weight': 'normal',
+        'size': 16,
+        }
+plt.text(0.75, 0.9, 'matplotlib', transform=axes.transAxes)
 axes.set_xlim(xmin=0,xmax=100)
 axes.set_ylim(ymin=ylow,ymax=yhigh)
 plt.show()
