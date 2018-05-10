@@ -2,7 +2,8 @@ import requests
 import json
 import matplotlib.pyplot as plt
 import numpy as np
-key='AQXSQPCS64BZ2LPP'
+import config
+key=config.api_key
 #Intraday, interval 15 minutes, length full
 stock="GOOGL"
 r=requests.get('https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol='+stock+'&interval=60min&outputsize=compact&apikey='+'AQXSQPCS64BZ2LPP')
