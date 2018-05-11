@@ -37,11 +37,14 @@ limiter=0
 for date in SMAtechnical:
     xticks.append(date)
     SMAvalue.append(SMAtechnical[date]["SMA"])
-
+    limiter=limiter+1
+    plt.scatter(limiter,SMAtechnical[date]["SMA"])
+    if limiter>100:
+        break
 # plt
-#axes = plt.gca()
-#axes.set_xlabel("Time")
-#axes.set_ylabel("Price (Highs)")
+axes = plt.gca()
+axes.set_xlabel("Time")
+axes.set_ylabel("Price (Highs)")
 
 # ["2018-05-02 16:00:00"]["2. high"]
 yhigh, ylow = -1, -1
@@ -67,31 +70,15 @@ for timestamp in timeseries:
 
     # print values to terminal
     #print ('(' + str(x) + ',' + str(y) + ')')
+    plt.scatter(x, y)
     
-fig, ax = plt.subplots()
-ax.plot(xticks, SMAvalue)
-
-# format the ticks
-ax.xaxis.set_major_locator(years)
-ax.xaxis.set_major_formatter(yearsFmt)
-ax.xaxis.set_minor_locator(months)
-
-# round to nearest years...
-datemin = np.datetime64(xticks[1], 'Y')
-datemax = np.datetime64(xticks[-1], 'Y') + np.timedelta64(1, 'Y')
-print (datemin)
-ax.set_xlim(str(datemin), str(datemax))
-
-
-# format the coords message box
-def price(x):
-    return '$%1.2f' % x
-ax.format_xdata = mdates.DateFormatter('%Y-%m-%d')
-ax.format_ydata = price
-#ax.grid(True)
-
-# rotates and right aligns the x labels, and moves the bottom of the
-# axes up to make room for them
-#fig.autofmt_xdate()
+font = {'family': 'serif',
+        'color':  'darkred',
+        'weight': 'normal',
+        'size': 16,
+        }
+plt.text(0.75, 0.9, 'SMA/Daily High', transform=axes.transAxes)
+axes.set_xlim(xmin=0,xmax=100)
+axes.set_ylim(ymin=ylow,ymax=yhigh)
 
 plt.show()
