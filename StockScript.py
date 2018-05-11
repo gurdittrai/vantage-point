@@ -3,26 +3,45 @@ import json
 import matplotlib.pyplot as plt
 import numpy as np
 import config
+import matplotlib.dates as mdates
 key=config.api_key
-#Intraday, interval 15 minutes, length full
+
+years = mdates.YearLocator()   # every year
+months = mdates.MonthLocator()  # every month
+yearsFmt = mdates.DateFormatter('%Y')
+
 stock="GOOGL"
-r=requests.get('https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol='+stock+'&interval=60min&outputsize=compact&apikey='+'AQXSQPCS64BZ2LPP')
+r=requests.get('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol='+stock+'&outputsize=full&apikey='+key)
+#SMA is the simple moving average. The average of the 50 points surrounding the point of interest
+SMA=requests.get('https://www.alphavantage.co/query?function=SMA&symbol='+stock+'&interval=daily&time_period=50&series_type=close&apikey='+key)
 
 #status on request
 if (r.status_code==200):
     data = r.json()
 else:
-    print ("Error")
+    print ("Error retrieving stock data")
+
+if (r.status_code==200):
+    SMAdata = SMA.json()
+else:
+    print ("Error retreiving SMA")
 
 endtime=data["Meta Data"]["3. Last Refreshed"]
-interval=data["Meta Data"]["4. Interval"]
-timeseries=data["Time Series (60min)"]
-length=len(timeseries)
+#interval=data["Meta Data"]["4. Interval"]
+timeseries=data["Time Series (Daily)"]
+SMAtechnical=SMAdata["Technical Analysis: SMA"]
+#length=len(SMAtechnical)
+xticks=[]
+SMAvalue=[]
+limiter=0
+for date in SMAtechnical:
+    xticks.append(date)
+    SMAvalue.append(SMAtechnical[date]["SMA"])
 
 # plt
-axes = plt.gca()
-axes.set_xlabel("Time")
-axes.set_ylabel("Price (Highs)")
+#axes = plt.gca()
+#axes.set_xlabel("Time")
+#axes.set_ylabel("Price (Highs)")
 
 # ["2018-05-02 16:00:00"]["2. high"]
 yhigh, ylow = -1, -1
@@ -48,31 +67,31 @@ for timestamp in timeseries:
 
     # print values to terminal
     #print ('(' + str(x) + ',' + str(y) + ')')
-    plt.scatter(x, y)
-font = {'family': 'serif',
-        'color':  'darkred',
-        'weight': 'normal',
-        'size': 16,
-        }
-plt.text(0.75, 0.9, 'matplotlib', transform=axes.transAxes)
-axes.set_xlim(xmin=0,xmax=100)
-axes.set_ylim(ymin=ylow,ymax=yhigh)
+    
+fig, ax = plt.subplots()
+ax.plot(xticks, SMAvalue)
+
+# format the ticks
+ax.xaxis.set_major_locator(years)
+ax.xaxis.set_major_formatter(yearsFmt)
+ax.xaxis.set_minor_locator(months)
+
+# round to nearest years...
+datemin = np.datetime64(xticks[1], 'Y')
+datemax = np.datetime64(xticks[-1], 'Y') + np.timedelta64(1, 'Y')
+print (datemin)
+ax.set_xlim(str(datemin), str(datemax))
+
+
+# format the coords message box
+def price(x):
+    return '$%1.2f' % x
+ax.format_xdata = mdates.DateFormatter('%Y-%m-%d')
+ax.format_ydata = price
+#ax.grid(True)
+
+# rotates and right aligns the x labels, and moves the bottom of the
+# axes up to make room for them
+#fig.autofmt_xdate()
+
 plt.show()
-
-# error_config = {'ecolor': '0.3'}
-# # starttime = timeseries.keys()[length-1]
-# # print data
-# # print endtime
-# fig, ax = plt.subplots()
-# bar_width=0.35
-# opacity=0.4
-# index=np.arange(length)
-# rects1 = ax.bar(index, timeseries[timestamp]["2. high"], bar_width,alpha=opacity, color='b', error_kw=error_config,label='MFST')
-# ax.set_xlabel('Date')
-# ax.set_ylabel('Price')
-# ax.set_title('Price by date')
-# ax.set_xticks(index + bar_width / 2)
-# ax.set_xticklabels(timeseries.keys())
-
-# fig.tight_layout()
-# plt.show()
