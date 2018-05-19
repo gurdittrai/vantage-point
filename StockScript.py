@@ -41,6 +41,8 @@ SMAenddate = datetime.date(int(SMAendtime[0:4]),int(SMAendtime[5:7]), int(SMAend
 #we want to limit the amount of data we plot to avoid crashing the program 
 SMAintervaldate=SMAenddate + relativedelta(days=-interval)
 SMAbreakdate=SMAintervaldate.strftime('%Y-%m-%d')
+priceintervaldate=enddate + relativedelta(days=-interval)
+pricebreakdate=priceintervaldate.strftime('%Y-%m-%d')
 #length=len(SMAtechnical)
 xticks=[]
 SMAvalue=[]
@@ -56,31 +58,37 @@ for date in SMAtechnical:
 # plt
 #axes = plt.gca()
 ax.set_xlabel("Time")
-ax.set_ylabel("Simple Moving Average (USD)")
-
-# ["2018-05-02 16:00:00"]["2. high"]
-yhigh, ylow = -1, -1
-x = 0
-high = "2. high"
+ax.set_ylabel("Value (USD)")
+pricex=[]
+pricey=[]
 for timestamp in timeseries:
-    # get values
-    x = x+1
-    y = float(timeseries[timestamp][high])
-    # limit output
-    if (x > 100):
+    pricex.append(timestamp)
+    pricey.append(float(timeseries[timestamp]["2. high"]))
+    if timestamp==pricebreakdate:
         break
-    # get range
-    if (yhigh == -1):
-        yhigh = y
-        ylow = y
-    elif (y > yhigh):
-        yhigh = y
-    elif (y < ylow):
-        ylow = y
+# # ["2018-05-02 16:00:00"]["2. high"]
+# yhigh, ylow = -1, -1
+# x = 0
+# high = "2. high"
+# for timestamp in timeseries:
+#     # get values
+#     x = x+1
+#     y = float(timeseries[timestamp][high])
+#     # limit output
+#     if (x > 100):
+#         break
+#     # get range
+#     if (yhigh == -1):
+#         yhigh = y
+#         ylow = y
+#     elif (y > yhigh):
+#         yhigh = y
+#     elif (y < ylow):
+#         ylow = y
 
-    # print values to terminal
-    #print ('(' + str(x) + ',' + str(y) + ')')
-    #plt.scatter(x, y)   
+#     # print values to terminal
+#     #print ('(' + str(x) + ',' + str(y) + ')')
+#     #plt.scatter(x, y)   
 font = {'family': 'serif',
         'color':  'darkred',
         'weight': 'normal',
@@ -89,11 +97,15 @@ font = {'family': 'serif',
 #reversing the lists since they are read from most recent time to the interval end
 plotxticks=xticks[::-1]
 plotSMAvalue=SMAvalue[::-1]
-SMAline = plt.plot(plotxticks,plotSMAvalue,lw=2.5,color='#1f77b4')
+plotpricevalue=pricey[::-1]
+SMAline, = plt.plot(plotxticks,plotSMAvalue,lw=2.5,color='#1f77b4',label='Simple Moving Average')
+priceline, = plt.plot(plotxticks,plotpricevalue,lw=2.5,color='black',label='Stock Price')
+plt.legend(handles=[SMAline,priceline])
 start, end = ax.get_xlim()
 ax.xaxis.set_ticks(np.arange(start, end, interval//10))
 fig.autofmt_xdate(bottom=0.2, rotation=30, ha='right')
 plt.text(0.9, 0.9, stock, transform=ax.transAxes)
 #ax.set_xlim(xmin=0,xmax=100)
 #ax.set_ylim(ymin=ylow,ymax=yhigh)
+
 plt.show()
