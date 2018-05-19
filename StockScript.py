@@ -22,18 +22,19 @@ def getData(interval,stock,key):
     else:
         print ("Error retreiving SMA")
     return(data,SMAdata)
+
 def plotData(data,SMAdata,stock,interval):
     #now we parse through the data to get important information like timestamps
     timeseries=data["Time Series (Daily)"]
     #get the start and end times 
     endtime=data["Meta Data"]["3. Last Refreshed"]
-    starttime=sorted(timeseries.keys())[0]
+    #starttime=sorted(timeseries.keys())[0]
     SMAtechnical=SMAdata["Technical Analysis: SMA"]
     SMAendtime=SMAdata["Meta Data"]["3: Last Refreshed"]
-    SMAstarttime=sorted(SMAtechnical.keys())[0]
-    startdate = datetime.date(int(starttime[0:4]),int(starttime[5:7]), int(starttime[8:10]) )
+    #SMAstarttime=sorted(SMAtechnical.keys())[0]
+    #startdate = datetime.date(int(starttime[0:4]),int(starttime[5:7]), int(starttime[8:10]) )
     enddate = datetime.date(int(endtime[0:4]),int(endtime[5:7]), int(endtime[8:10]) )
-    SMAstartdate = datetime.date(int(SMAstarttime[0:4]),int(SMAstarttime[5:7]), int(SMAstarttime[8:10]) )
+    #SMAstartdate = datetime.date(int(SMAstarttime[0:4]),int(SMAstarttime[5:7]), int(SMAstarttime[8:10]) )
     SMAenddate = datetime.date(int(SMAendtime[0:4]),int(SMAendtime[5:7]), int(SMAendtime[8:10]) )
     #delta calculates the number of days between two inputs output format: 5020 days, 0:00:00
     #we want to limit the amount of data we plot to avoid crashing the program 
