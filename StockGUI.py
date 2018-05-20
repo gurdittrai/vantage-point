@@ -7,11 +7,13 @@ import matplotlib.pyplot as plt
 import StockScript 
 import tkinter as tk 
 from tkinter import ttk
+from tkinter import Entry
 import config
 key=config.api_key
 interval=100
 stock="GOOGL"
 LARGE_FONT=("Verdana",12)
+small_font=("Verdana",8)
 class stockapp(tk.Tk):
     #all code in __init__ method is run when app starts (creates startpage etc.) 
     def __init__(self,*args,**kwargs):
@@ -43,6 +45,10 @@ class StartPage(tk.Frame):
         label=tk.Label(self,text="Main Page",font=LARGE_FONT)
         label.pack(pady=10,padx=10)
         #lambda function might have trouble if you pass a variable to it
+        stock_symbol_entry=Entry(self)
+        user_input=tk.Label(self, text="Stock Symbol",font=small_font)
+        user_input.pack(pady=10,padx=10)
+        stock_symbol_entry.pack()
         button1=ttk.Button(self,text="Plot Page",command=lambda: controller.show_frame(PlotPage))
         button1.pack()
 #we can copy this (almost) exactly to create more pages
@@ -59,5 +65,9 @@ class PlotPage(tk.Frame):
         canvas=FigureCanvasTkAgg(fig,self)
         canvas.draw()
         canvas.get_tk_widget().pack(side=tk.TOP,fill=tk.BOTH,expand=True)
+        toolbar=NavigationToolbar2TkAgg(canvas,self)
+        toolbar.update()
+        canvas._tkcanvas.pack(side=tk.TOP,fill=tk.BOTH,expand=True)
+
 app=stockapp()
 app.mainloop()
