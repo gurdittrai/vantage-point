@@ -1,5 +1,16 @@
+import matplotlib
+#these will allow us to embed matplotlib into tkinter windows
+matplotlib.use("TkAgg")
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
+import StockScript 
 import tkinter as tk 
 from tkinter import ttk
+import config
+key=config.api_key
+interval=100
+stock="GOOGL"
 LARGE_FONT=("Verdana",12)
 class stockapp(tk.Tk):
     #all code in __init__ method is run when app starts (creates startpage etc.) 
@@ -42,5 +53,11 @@ class PlotPage(tk.Frame):
         label.pack(pady=10,padx=10)
         button1=ttk.Button(self,text="Back to home",command=lambda: controller.show_frame(StartPage))
         button1.pack()
+        fig=plt.figure(facecolor='white')
+        data, SMAdata=StockScript.getData(interval,stock,key)
+        StockScript.plotData(data,SMAdata,stock,interval,fig)
+        canvas=FigureCanvasTkAgg(fig,self)
+        canvas.draw()
+        canvas.get_tk_widget().pack(side=tk.TOP,fill=tk.BOTH,expand=True)
 app=stockapp()
 app.mainloop()

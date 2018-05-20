@@ -5,7 +5,6 @@ import json
 import matplotlib.pyplot as plt
 import numpy as np
 import config
-
 def getData(interval,stock,key):
     r=requests.get('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol='+stock+'&outputsize=full&apikey='+key)
     #SMA is the simple moving average. The average of the 50 points surrounding the point of interest
@@ -23,7 +22,7 @@ def getData(interval,stock,key):
         print ("Error retreiving SMA")
     return(data,SMAdata)
 
-def plotData(data,SMAdata,stock,interval):
+def plotData(data,SMAdata,stock,interval,fig):
     #now we parse through the data to get important information like timestamps
     timeseries=data["Time Series (Daily)"]
     #get the start and end times 
@@ -45,7 +44,7 @@ def plotData(data,SMAdata,stock,interval):
     #length=len(SMAtechnical)
     xticks=[]
     SMAvalue=[]
-    fig=plt.figure(facecolor='white')
+    #fig=plt.figure(facecolor='white')
     ax=plt.axes()
     for date in SMAtechnical:
         xticks.append(date)
@@ -85,15 +84,15 @@ def plotData(data,SMAdata,stock,interval):
     #ax.set_xlim(xmin=0,xmax=100)
     #ax.set_ylim(ymin=ylow,ymax=yhigh)
     plt.title("Tracking: "+stock+" Interval: "+str(interval)+" days")
-    plt.show()
+    #plt.show()
 
-def main():
-    key=config.api_key
-    #change this to get more/less data on plot
-    interval=365
-    stock="GOOGL"
-    data, SMAdata=getData(interval,stock,key)
-    plotData(data,SMAdata,stock,interval)
+# def main():
+#     key=config.api_key
+#     #change this to get more/less data on plot
+#     interval=365
+#     stock="GOOGL"
+#     data, SMAdata=getData(interval,stock,key)
+#     plotData(data,SMAdata,stock,interval)
     
-if __name__=='__main__' :
-    main()
+# if __name__=='__main__' :
+#     main()
