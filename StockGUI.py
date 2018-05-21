@@ -14,6 +14,33 @@ interval=200
 stock="ABX"
 LARGE_FONT=("Verdana",12)
 small_font=("Verdana",8)
+
+class stockinfo():
+    #track amount of stock being handled
+    stocklist = []
+    numstocks = 0
+
+    #stock info fields
+    fields = 'Stock Symbol', 'Interval (days)'
+
+    #instance variables
+    def __init__(self, symbol, interval):
+        self.symbol = symbol
+        self.interval = interval
+        stockinfo.stocklist.append(self)
+
+    #update instance variables
+    def update_interval(self, new_intv):
+        self.interval = new_intv
+
+    #print list
+    def liststocks():
+        print('Stock List:\n')
+        for stock in stockinfo.stocklist:
+            print('%s: %s' % (stockinfo.fields[0], stock.symbol))
+            print('%s: %s\n' % (stockinfo.fields[1], stock.interval))
+
+
 class stockapp(tk.Tk):
     #all code in __init__ method is run when app starts (creates startpage etc.) 
     def __init__(self,*args,**kwargs):
@@ -28,7 +55,7 @@ class stockapp(tk.Tk):
 
         self.frames={}
         #add the pages in this list everytime you make a new page
-        for F in (StartPage,PlotPage,TestPage):
+        for F in (StartPage,PlotPage,OldPage):
             #frame should represent different windows in the app
             frame=F(container,self)
             self.frames[F]=frame
@@ -40,11 +67,88 @@ class stockapp(tk.Tk):
         #selecting the right window to display and displaying it
         frame=self.frames[cont]
         frame.tkraise()
+
 #creates a window "StartPage"
 class StartPage(tk.Frame):
+    #print values of fields
+    def addstock(self, entries):
+        symbol = '_ERROR_'
+        interval = '_ERROR_'
+
+        for entry in entries:
+            field = entry[2]
+            text = entry[1].get()
+
+            if (field == stockinfo.fields[0]):
+                symbol = text
+            elif (field == stockinfo.fields[1]):
+                interval = text
+            else:
+                print("warning: unidef field detected")
+            print('%s: %s' % (field, text))
+
+        #init stock
+        stockinfo.__init__(self, symbol, interval)
+        
+
+    def create_window(self, parent, controller, entries, fields, field_defaults):
+        tk.Frame.__init__(self, parent)
+        label=tk.Label(self,text="Test Page",font=LARGE_FONT)
+        btn_old = ttk.Button(self,text="Old Page",command=lambda: controller.show_frame(OldPage))
+        btn_plot = ttk.Button(self,text="Plot",command=lambda: controller.show_frame(PlotPage))
+        btn_exit = ttk.Button(self,text="Exit",command=lambda: exit(1))
+
+        #create input fields
+        for field, fdefault in zip(fields, field_defaults):
+            #three columns
+            rowlabel = tk.Label(self, text=field, font=small_font)
+
+            entry = Entry(self)
+            entry.insert(10,fdefault)
+
+            #add to list
+            entries.append((rowlabel, entry, field))
+
+        btn_addstock = ttk.Button(self,text="Enter",command=lambda: self.addstock(entries))
+        btn_showstocks = ttk.Button(self,text="Show List",command=lambda: stockinfo.liststocks())
+
+        #grid
+        rowCount = 0
+
+        #adding heading
+        label.grid(row=rowCount,column=0)
+        rowCount += 1
+        
+        #adding entries to the grid
+        for r, entry in enumerate(entries, start=rowCount):
+            for c in range(0,2):
+                entry[c].grid(row=r,column=c)
+            rowCount += 1
+
+        #button
+        btn_addstock.grid(row=rowCount,column=1)
+        btn_showstocks.grid(row=rowCount,column=2)
+        rowCount += 1
+
+        #other pages
+        btn_old.grid(row=rowCount,column=0)
+        btn_plot.grid(row=rowCount,column=1)
+        #exit
+        btn_exit.grid(row=rowCount,column=2)
+
+    def __init__(self, parent, controller):
+        #input fields
+        entries = []
+        field_defaults = 'GOOGL', '7'
+
+        #make window
+        self.create_window(parent, controller, entries, stockinfo.fields, field_defaults)
+
+
+class OldPage(tk.Frame):
 
     def __init__(self,parent, controller):
-        root = tk.Frame.__init__(self,parent)
+        tk.Frame.__init__(self,parent)
         label = tk.Label(self,text="Main Page",font=LARGE_FONT)
 
         #create field
@@ -61,7 +165,7 @@ class StartPage(tk.Frame):
         btn_stock = ttk.Button(self,text="Enter1")
         btn_interval = ttk.Button(self,text="Enter2",command=lambda: print("Symbol: %s\nInterval: %s" % (stock_symbol_entry.get(), interval_entry.get())))
         btn_plot = ttk.Button(self,text="Plot Page",command=lambda: controller.show_frame(PlotPage))
-        btn_test = ttk.Button(self,text="Test Page",command=lambda: controller.show_frame(TestPage))
+        btn_test = ttk.Button(self,text="Home Page",command=lambda: controller.show_frame(StartPage))
         btn_exit = ttk.Button(self,text="Exit",command=lambda: exit(1))
 
         #grid
@@ -75,8 +179,8 @@ class StartPage(tk.Frame):
 
         btn_stock.grid(row=1,column=3)
         btn_interval.grid(row=2,column=3)
-        btn_plot.grid(row=3,column=0)
-        btn_test.grid(row=3,column=1)
+        btn_plot.grid(row=3,column=1)
+        btn_test.grid(row=3,column=0)
         btn_exit.grid(row=4,column=0)
 
 #we can copy this (almost) exactly to create more pages
@@ -97,59 +201,7 @@ class PlotPage(tk.Frame):
         toolbar.update()
         canvas._tkcanvas.pack(side=tk.TOP,fill=tk.BOTH,expand=True)
 
-class TestPage(tk.Frame):
-    #print values of fields
-    def fetch(self, entries):
-        for entry in entries:
-            field = entry[3]
-            text = entry[1].get()
-            print('%s: %s' % (field, text))
 
-    def create_window(self, parent, controller, fields, field_defaults):
-        tk.Frame.__init__(self, parent)
-        label=tk.Label(self,text="Test Page",font=LARGE_FONT)
-        btn_home = ttk.Button(self,text="Home Page",command=lambda: controller.show_frame(StartPage))
-
-        #create input fields
-        entries = []
-        for field, fdefault in zip(fields, field_defaults):
-            #three columns
-            rowlabel = tk.Label(self, text=field, font=small_font)
-
-            entry = Entry(self)
-            entry.insert(10,fdefault)
-
-            btn = ttk.Button(self,text="Enter",command=lambda: self.fetch(entries))
-
-            #add to list
-            entries.append((rowlabel, entry, btn, field))
-
-        #grid
-        rowCount = 0
-
-        #adding heading
-        label.grid(row=rowCount,column=0)
-        rowCount += 1
-        
-        #adding entries to the grid
-        for r, entry in enumerate(entries, start=rowCount):
-            for c in range(0,3):
-                entry[c].grid(row=r,column=c)
-            rowCount += 1
-
-        btn_home.grid(row=rowCount,column=0)
-
-    def __init__(self, parent, controller):
-        #input fields
-        fields = 'Stock Symbol', 'Interval (days)'
-        field_defaults = 'GOOGL', '7'
-
-        #make window
-        self.create_window(parent, controller, fields, field_defaults)
-
-#btn function
-    def showValue(field, entry):
-        print('%s: %s' % (field, entry.get()))
 
 app=stockapp()
 app.mainloop()
