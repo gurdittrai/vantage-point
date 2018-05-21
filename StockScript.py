@@ -20,6 +20,13 @@ def getData(interval,stock,key):
         SMAdata = SMA.json()
     else:
         print ("Error retreiving SMA")
+
+    #alpha error
+    info = data["Information"]
+    if "try again" in info:
+        print(info)
+        exit(1)
+    
     return(data,SMAdata)
 
 def plotData(data,SMAdata,stock,interval,fig):
