@@ -10,8 +10,8 @@ from tkinter import ttk
 from tkinter import Entry
 import config
 key=config.api_key
-interval=100
-stock="GOOGL"
+interval=200
+stock="ABX"
 LARGE_FONT=("Verdana",12)
 small_font=("Verdana",8)
 class stockapp(tk.Tk):
@@ -43,14 +43,24 @@ class StartPage(tk.Frame):
     def __init__(self,parent, controller):
         tk.Frame.__init__(self,parent)
         label=tk.Label(self,text="Main Page",font=LARGE_FONT)
-        label.pack(pady=10,padx=10)
-        #lambda function might have trouble if you pass a variable to it
+        label.grid(row=0,column=0)
+       
         stock_symbol_entry=Entry(self)
         user_input=tk.Label(self, text="Stock Symbol",font=small_font)
-        user_input.pack(pady=10,padx=10)
-        stock_symbol_entry.pack()
+        user_input.grid(row=1,column=0)
+        stock_symbol_entry.grid(row=1,column=1)
+        interval_entry=Entry(self)
+        interval_input=tk.Label(self, text="Interval (days)",font=small_font)
+        interval_input.grid(row=2,column=0)
+        interval_entry.grid(row=2,column=1)
+       
         button1=ttk.Button(self,text="Plot Page",command=lambda: controller.show_frame(PlotPage))
-        button1.pack()
+        button1.grid(row=3,column=0)
+        button2=ttk.Button(self,text="Enter",command=get_interval())
+        button2.grid(row=1,column=3)
+        button3=ttk.Button(self,text="Enter",command=lambda: print("test2"))
+        button3.grid(row=2,column=3)
+
 #we can copy this (almost) exactly to create more pages
 class PlotPage(tk.Frame):
     def __init__(self,parent,controller):
@@ -68,6 +78,8 @@ class PlotPage(tk.Frame):
         toolbar=NavigationToolbar2TkAgg(canvas,self)
         toolbar.update()
         canvas._tkcanvas.pack(side=tk.TOP,fill=tk.BOTH,expand=True)
-
+def get_interval():
+    interval=tk.IntVar()
+    print ("Test: "+str(interval.get()))
 app=stockapp()
 app.mainloop()
