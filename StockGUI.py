@@ -41,24 +41,35 @@ class stockapp(tk.Tk):
 #creates a window "StartPage"
 class StartPage(tk.Frame):
     def __init__(self,parent, controller):
-        tk.Frame.__init__(self,parent)
-        label=tk.Label(self,text="Main Page",font=LARGE_FONT)
-        label.grid(row=0,column=0)
-       
+        root = tk.Frame.__init__(self,parent)
+        label = tk.Label(self,text="Main Page",font=LARGE_FONT)
+        
+        fields = ('Stock Symbol', 'Interval (days)')
+
         stock_symbol_entry=Entry(self)
         user_input=tk.Label(self, text="Stock Symbol",font=small_font)
-        user_input.grid(row=1,column=0)
-        stock_symbol_entry.grid(row=1,column=1)
+        
         interval_entry=Entry(self)
         interval_input=tk.Label(self, text="Interval (days)",font=small_font)
+
+        stock_symbol_entry.insert(10,'GOOGL')
+        interval_entry.insert(10,7)
+        
+        button1=ttk.Button(self,text="Plot Page",command=lambda: controller.show_frame(PlotPage))
+        #button2=ttk.Button(self,text="Enter1",command=get_interval())
+        button3=ttk.Button(self,text="Enter2",command=lambda: print("Symbol: %s\nInterval: %s" % (stock_symbol_entry.get(), interval_entry.get())))
+        
+        #grid
+        label.grid(row=0,column=0)
+
+        user_input.grid(row=1,column=0)
+        stock_symbol_entry.grid(row=1,column=1)
+
         interval_input.grid(row=2,column=0)
         interval_entry.grid(row=2,column=1)
-       
-        button1=ttk.Button(self,text="Plot Page",command=lambda: controller.show_frame(PlotPage))
+
         button1.grid(row=3,column=0)
-        button2=ttk.Button(self,text="Enter",command=get_interval())
-        button2.grid(row=1,column=3)
-        button3=ttk.Button(self,text="Enter",command=lambda: print("test2"))
+        #button2.grid(row=1,column=3)
         button3.grid(row=2,column=3)
 
 #we can copy this (almost) exactly to create more pages
@@ -79,7 +90,8 @@ class PlotPage(tk.Frame):
         toolbar.update()
         canvas._tkcanvas.pack(side=tk.TOP,fill=tk.BOTH,expand=True)
 def get_interval():
-    interval=tk.IntVar()
-    print ("Test: "+str(interval.get()))
+    print("hello")
+    #interval=tk.IntVar()
+    #print ("Test: "+str(interval.get()))
 app=stockapp()
 app.mainloop()

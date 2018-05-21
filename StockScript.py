@@ -22,10 +22,11 @@ def getData(interval,stock,key):
         print ("Error retreiving SMA")
 
     #alpha error
-    info = data["Information"]
-    if "try again" in info:
-        print(info)
-        exit(1)
+    if "Information" in data:
+        info = data["Information"]
+        if "try again" in info:
+            print(info)
+            exit(1)
     
     return(data,SMAdata)
 
