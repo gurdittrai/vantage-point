@@ -14,12 +14,26 @@ interval=200
 stock="ABX"
 LARGE_FONT=("Verdana",12)
 small_font=("Verdana",8)
-
-class stockinfo():
+class stocks():
     #track amount of stock being handled
     stocklist = []
-    numstocks = 0
 
+    #list methods
+    def addtolist(stock):
+        stocks.stocklist.append(stock)
+
+    def rmvfromlist(stock):
+        stocks.stocklist.remove(stock)
+
+    #print list
+    def liststocks():
+        print('Stock List:\n')
+        for stock in stocks.stocklist:
+            print('%s: %s' % (stockinfo.fields[0], stock.symbol))
+            print('%s: %s\n' % (stockinfo.fields[1], stock.interval))
+
+
+class stockinfo():
     #stock info fields
     fields = 'Stock Symbol', 'Interval (days)'
 
@@ -27,18 +41,10 @@ class stockinfo():
     def __init__(self, symbol, interval):
         self.symbol = symbol
         self.interval = interval
-        stockinfo.stocklist.append(self)
 
     #update instance variables
     def update_interval(self, new_intv):
         self.interval = new_intv
-
-    #print list
-    def liststocks():
-        print('Stock List:\n')
-        for stock in stockinfo.stocklist:
-            print('%s: %s' % (stockinfo.fields[0], stock.symbol))
-            print('%s: %s\n' % (stockinfo.fields[1], stock.interval))
 
 
 class stockapp(tk.Tk):
@@ -47,6 +53,7 @@ class stockapp(tk.Tk):
         tk.Tk.__init__(self,*args,**kwargs)
         tk.Tk.iconbitmap(self,default="icon_stocks.ico")
         tk.Tk.wm_title(self,"Stock Tracking")
+
         #container should be the main window object
         container=tk.Frame(self)
         container.pack(side="top",fill="both",expand=True)
@@ -88,12 +95,13 @@ class StartPage(tk.Frame):
             print('%s: %s' % (field, text))
 
         #init stock
-        stockinfo.__init__(self, symbol, interval)
+        stocks.addtolist(stockinfo(symbol, interval))
+        
         
 
     def create_window(self, parent, controller, entries, fields, field_defaults):
         tk.Frame.__init__(self, parent)
-        label=tk.Label(self,text="Test Page",font=LARGE_FONT)
+        label = tk.Label(self,text="Test Page",font=LARGE_FONT)
         btn_old = ttk.Button(self,text="Old Page",command=lambda: controller.show_frame(OldPage))
         btn_plot = ttk.Button(self,text="Plot",command=lambda: controller.show_frame(PlotPage))
         btn_exit = ttk.Button(self,text="Exit",command=lambda: exit(1))
@@ -110,7 +118,7 @@ class StartPage(tk.Frame):
             entries.append((rowlabel, entry, field))
 
         btn_addstock = ttk.Button(self,text="Enter",command=lambda: self.addstock(entries))
-        btn_showstocks = ttk.Button(self,text="Show List",command=lambda: stockinfo.liststocks())
+        btn_showstocks = ttk.Button(self,text="Show List",command=lambda: stocks.liststocks())
 
         #grid
         rowCount = 0
