@@ -99,34 +99,35 @@ class PlotPage(tk.Frame):
 
 class TestPage(tk.Frame):
     #print values of fields
-    def fetch(entries):
+    def fetch(self, entries):
         for entry in entries:
-            field = entry[0]
+            field = entry[3]
             text = entry[1].get()
             print('%s: %s' % (field, text))
 
-    def __init__(self, parent, controller):
+    def create_window(self, parent, controller, fields, field_defaults):
         tk.Frame.__init__(self, parent)
         label=tk.Label(self,text="Test Page",font=LARGE_FONT)
         btn_home = ttk.Button(self,text="Home Page",command=lambda: controller.show_frame(StartPage))
 
         #create input fields
-        fields = 'Stock Symbol', 'Interval (days)'
-        field_defaults = 'GOOGL', '7'
         entries = []
         for field, fdefault in zip(fields, field_defaults):
             #three columns
             rowlabel = tk.Label(self, text=field, font=small_font)
+
             entry = Entry(self)
             entry.insert(10,fdefault)
-            btn = ttk.Button(self,text="Enter",command=lambda: print('%s: %s' % (field, entry.get())))
+
+            btn = ttk.Button(self,text="Enter",command=lambda: self.fetch(entries))
+
             #add to list
             entries.append((rowlabel, entry, btn, field))
 
         #grid
         rowCount = 0
 
-        #adding start and end rows
+        #adding heading
         label.grid(row=rowCount,column=0)
         rowCount += 1
         
@@ -137,6 +138,14 @@ class TestPage(tk.Frame):
             rowCount += 1
 
         btn_home.grid(row=rowCount,column=0)
+
+    def __init__(self, parent, controller):
+        #input fields
+        fields = 'Stock Symbol', 'Interval (days)'
+        field_defaults = 'GOOGL', '7'
+
+        #make window
+        self.create_window(parent, controller, fields, field_defaults)
 
 #btn function
     def showValue(field, entry):
