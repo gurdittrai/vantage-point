@@ -30,6 +30,35 @@ def getData(interval,stock,key):
     
     return(data,SMAdata)
 
+def getcurrentdata(interval,stock,key):
+    r=requests.get('https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol='+stock+'&interval=1min&apikey='+key)
+
+    #status on request
+    if (r.status_code==200):
+        data = r.json()
+    else:
+        print ("Error retrieving stock data")
+
+    #alpha error
+    if "Information" in data:
+        info = data["Information"]
+        if "try again" in info:
+            print(info)
+            exit(1)
+
+    #get the first timestamp
+    timesseries=data["Time Series (1min)"]
+    for timestamp in timesseries:
+        curntvalue = timesseries[timestamp]
+
+        stk_open    = curntvalue["1. open"]
+        stk_high    = curntvalue["2. high"]
+        stk_low     = curntvalue["3. low"]
+        stk_close   = curntvalue["4. close"]
+        return(stk_open, stk_high, stk_low, stk_close)
+    
+    return('0','0','0','0')
+
 def plotData(data,SMAdata,stock,interval,fig):
     #now we parse through the data to get important information like timestamps
     timeseries=data["Time Series (Daily)"]
@@ -99,8 +128,9 @@ def plotData(data,SMAdata,stock,interval,fig):
 #     #change this to get more/less data on plot
 #     interval=365
 #     stock="GOOGL"
-#     data, SMAdata=getData(interval,stock,key)
-#     plotData(data,SMAdata,stock,interval)
+#     data=getcurrentdata(interval,stock,key)
+#     print(data)
+#     # plotData(data,SMAdata,stock,interval)
     
 # if __name__=='__main__' :
 #     main()
