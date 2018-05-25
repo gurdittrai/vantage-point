@@ -88,7 +88,7 @@ def plotData(data,SMAdata,stock,interval,fig):
         SMAvalue.append(float(SMAtechnical[date]["SMA"]))
         #plt.scatter(limiter,float(SMAtechnical[date]["SMA"]))
         #stops reading the data once interval end is reached
-        if date==SMAbreakdate:
+        if date<=SMAbreakdate:
             break
     # plt
     #axes = plt.gca()
@@ -99,7 +99,7 @@ def plotData(data,SMAdata,stock,interval,fig):
     for timestamp in timeseries:
         pricex.append(timestamp)
         pricey.append(float(timeseries[timestamp]["2. high"]))
-        if timestamp==pricebreakdate:
+        if timestamp<=pricebreakdate:
             break
     font = {'family': 'serif',
             'color':  'darkred',
@@ -121,7 +121,7 @@ def plotData(data,SMAdata,stock,interval,fig):
     #ax.set_xlim(xmin=0,xmax=100)
     #ax.set_ylim(ymin=ylow,ymax=yhigh)
     plt.title("Tracking: "+stock+" Interval: "+str(interval)+" days")
-    #plt.show()
+    plt.show()
 
 # def main():
 #     key=config.api_key
