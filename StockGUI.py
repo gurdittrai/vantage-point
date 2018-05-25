@@ -228,12 +228,17 @@ class PlotPage(tk.Frame):
         btn_fetch.pack()
         btn_plot = ttk.Button(self,text="Plot Data",command=lambda: self.plotData())
         btn_plot.pack()
-
-        self.fig=plt.figure(facecolor='white')
+        
         # data, SMAdata=StockScript.getData(interval,stock,key)
         # StockScript.plotData(data,SMAdata,stock,interval,fig)
 
-        canvas=FigureCanvasTkAgg(self.fig,self)
+        
+    def getData(self):
+        self.data,self.SMAdata=StockScript.getData(interval,stock,key)
+    def plotData(self):
+        fig=plt.figure(facecolor='white')
+        StockScript.plotData(self.data,self.SMAdata,stock,interval,fig)
+        canvas=FigureCanvasTkAgg(fig,self)
         canvas.draw()
         canvas.get_tk_widget().pack(side=tk.TOP,fill=tk.BOTH,expand=True)
 
@@ -241,10 +246,5 @@ class PlotPage(tk.Frame):
         toolbar.update()
 
         canvas._tkcanvas.pack(side=tk.TOP,fill=tk.BOTH,expand=True)
-    def getData(self):
-        self.data,self.SMAdata=StockScript.getData(interval,stock,key)
-    def plotData(self):
-        StockScript.plotData(self.data,self.SMAdata,stock,interval,self.fig)
-
 app=stockapp()
 app.mainloop()

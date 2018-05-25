@@ -121,7 +121,7 @@ def plotData(data,SMAdata,stock,interval,fig):
     #ax.set_xlim(xmin=0,xmax=100)
     #ax.set_ylim(ymin=ylow,ymax=yhigh)
     plt.title("Tracking: "+stock+" Interval: "+str(interval)+" days")
-    plt.show()
+    #plt.show()
 
 # def main():
 #     key=config.api_key
