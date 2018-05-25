@@ -14,6 +14,12 @@ interval=200
 stock="ABX"
 LARGE_FONT=("Verdana",12)
 small_font=("Verdana",8)
+def set_symbol(temp_stock):
+    global stock
+    stock=temp_stock
+def set_interval(temp_interval):
+    global interval
+    interval=int(temp_interval)
 class stocks():
     #track amount of stock being handled
     stocklist = []
@@ -62,7 +68,7 @@ class stockapp(tk.Tk):
 
         self.frames={}
         #add the pages in this list everytime you make a new page
-        for F in (StartPage,PlotPage,OldPage):
+        for F in (StartPage,PlotPage):
             #frame should represent different windows in the app
             frame=F(container,self)
             self.frames[F]=frame
@@ -78,6 +84,7 @@ class stockapp(tk.Tk):
 #creates a window "StartPage"
 class StartPage(tk.Frame):
     #print values of fields
+  
     def addstock(self, entries):
         symbol = '_ERROR_'
         interval = '_ERROR_'
@@ -88,13 +95,16 @@ class StartPage(tk.Frame):
 
             if (field == stockinfo.fields[0]):
                 symbol = text
+                set_symbol(symbol)
             elif (field == stockinfo.fields[1]):
                 interval = text
+                set_interval(interval)
             else:
                 print("warning: unidef field detected")
 
         #init stock
         stocks.addtolist(stockinfo(symbol, interval))
+
         self.create_widget(symbol, interval)
         
         
@@ -102,7 +112,6 @@ class StartPage(tk.Frame):
     def create_window(self, parent, controller, fields, field_defaults):
         tk.Frame.__init__(self, parent)
         label = tk.Label(self,text="Test Page",font=LARGE_FONT)
-        btn_old = ttk.Button(self,text="Old Page",command=lambda: controller.show_frame(OldPage))
         btn_plot = ttk.Button(self,text="Plot",command=lambda: controller.show_frame(PlotPage))
         btn_exit = ttk.Button(self,text="Exit",command=lambda: exit(1))
 
@@ -139,8 +148,7 @@ class StartPage(tk.Frame):
         btn_showstocks.grid(row=rowCount,column=2)
         rowCount += 1
 
-        #other pages
-        btn_old.grid(row=rowCount,column=0)
+
         btn_plot.grid(row=rowCount,column=1)
         #exit
         btn_exit.grid(row=rowCount,column=2)
@@ -176,58 +184,18 @@ class StartPage(tk.Frame):
         #make window
         self.create_window(parent, controller, stockinfo.fields, field_defaults)
 
-
-class OldPage(tk.Frame):
-
-    def __init__(self,parent, controller):
-        tk.Frame.__init__(self,parent)
-        label = tk.Label(self,text="Main Page",font=LARGE_FONT)
-
-        #create field
-        stock_symbol_entry = Entry(self)
-        user_input = tk.Label(self, text="Stock Symbol",font=small_font)
-        
-        interval_entry = Entry(self)
-        interval_input = tk.Label(self, text="Interval (days)",font=small_font)
-
-        #set default values on the field
-        stock_symbol_entry.insert(10,'GOOGL')
-        interval_entry.insert(10,7)
-        
-        btn_stock = ttk.Button(self,text="Enter1")
-        btn_interval = ttk.Button(self,text="Enter2",command=lambda: print("Symbol: %s\nInterval: %s" % (stock_symbol_entry.get(), interval_entry.get())))
-        btn_plot = ttk.Button(self,text="Plot Page",command=lambda: controller.show_frame(PlotPage))
-        btn_test = ttk.Button(self,text="Home Page",command=lambda: controller.show_frame(StartPage))
-        btn_exit = ttk.Button(self,text="Exit",command=lambda: exit(1))
-
-        #grid
-        label.grid(row=0,column=0)
-
-        user_input.grid(row=1,column=0)
-        stock_symbol_entry.grid(row=1,column=1)
-
-        interval_input.grid(row=2,column=0)
-        interval_entry.grid(row=2,column=1)
-
-        btn_stock.grid(row=1,column=3)
-        btn_interval.grid(row=2,column=3)
-        btn_plot.grid(row=3,column=1)
-        btn_test.grid(row=3,column=0)
-        btn_exit.grid(row=4,column=0)
-
 #we can copy this (almost) exactly to create more pages
 class PlotPage(tk.Frame):
     def __init__(self,parent,controller):
         tk.Frame.__init__(self,parent)
         label=tk.Label(self,text="Plotting Page",font=LARGE_FONT)
-        label.pack(pady=10,padx=10)
-        
+        label.grid(row=0,column=1)
         button1=ttk.Button(self,text="Back to home",command=lambda: controller.show_frame(StartPage))
-        button1.pack()
+        button1.grid(row=1,column=0)
         btn_fetch = ttk.Button(self,text="Fetch Data",command=lambda: self.getData())
-        btn_fetch.pack()
+        btn_fetch.grid(row=1,column=1)
         btn_plot = ttk.Button(self,text="Plot Data",command=lambda: self.plotData())
-        btn_plot.pack()
+        btn_plot.grid(row=1,column=2)
         
         # data, SMAdata=StockScript.getData(interval,stock,key)
         # StockScript.plotData(data,SMAdata,stock,interval,fig)
@@ -240,11 +208,13 @@ class PlotPage(tk.Frame):
         StockScript.plotData(self.data,self.SMAdata,stock,interval,fig)
         canvas=FigureCanvasTkAgg(fig,self)
         canvas.draw()
-        canvas.get_tk_widget().pack(side=tk.TOP,fill=tk.BOTH,expand=True)
-
-        toolbar=NavigationToolbar2TkAgg(canvas,self)
+        canvas.get_tk_widget().grid(row=2,column=1)
+        toolbar_frame=tk.Frame(self)
+        toolbar_frame.grid(row=3,column=1)
+        toolbar=NavigationToolbar2TkAgg(canvas,toolbar_frame)
         toolbar.update()
-
-        canvas._tkcanvas.pack(side=tk.TOP,fill=tk.BOTH,expand=True)
+        # toolbar=NavigationToolbar2TkAgg(canvas,self)
+        # toolbar.update()
+        canvas._tkcanvas.grid(row=2,column=1)
 app=stockapp()
 app.mainloop()
