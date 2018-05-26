@@ -5,6 +5,8 @@ import json
 import matplotlib.pyplot as plt
 import numpy as np
 import config
+import matplotlib.gridspec as gridspec
+
 def getData(interval,stock,key):
     r=requests.get('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol='+stock+'&outputsize=full&apikey='+key)
     #SMA is the simple moving average. The average of the 50 points surrounding the point of interest
@@ -90,15 +92,16 @@ def plotData(data,SMAdata,stock,interval,fig):
         #stops reading the data once interval end is reached
         if date<=SMAbreakdate:
             break
-    # plt
-    #axes = plt.gca()
+
     ax.set_xlabel("Time")
     ax.set_ylabel("Value (USD)")
     pricex=[]
     pricey=[]
+    volume=[]
     for timestamp in timeseries:
         pricex.append(timestamp)
         pricey.append(float(timeseries[timestamp]["2. high"]))
+        volume.append(float(timeseries[timestamp]["5. volume"]))
         if timestamp<=pricebreakdate:
             break
     font = {'family': 'serif',
@@ -110,19 +113,36 @@ def plotData(data,SMAdata,stock,interval,fig):
     plotxticks=xticks[::-1]
     plotSMAvalue=SMAvalue[::-1]
     plotpricevalue=pricey[::-1]
+    plotvolume=volume[::-1]
     #This is the actual plotting and formatting section
-    SMAline, = plt.plot(plotxticks,plotSMAvalue,lw=2.5,color='#1f77b4',label='Simple Moving Average')
-    priceline, = plt.plot(plotxticks,plotpricevalue,lw=2.5,color='black',label='Stock Price')
-    plt.legend(handles=[SMAline,priceline])
-    start, end = ax.get_xlim()
-    ax.xaxis.set_ticks(np.arange(start, end, interval//10))
+    # plt.subplot(211)
+    # SMAline, = plt.plot(plotxticks,plotSMAvalue,lw=2.5,label='Simple Moving Average')
+    # priceline, = plt.plot(plotxticks,plotpricevalue,lw=2.5,label='Stock Price')
+    # plt.legend(handles=[SMAline,priceline])
+    # start, end = ax.get_xlim()
+    # ax.xaxis.set_ticks(np.arange(start, end, interval//10))
+    # fig.autofmt_xdate(bottom=0.2, rotation=30, ha='right')
+    # #plt.text(0.9, 0.9, stock, transform=ax.transAxes)
+    # #ax.set_xlim(xmin=0,xmax=100)
+    # #ax.set_ylim(ymin=ylow,ymax=yhigh)
+    # plt.title("Tracking: "+stock+" Interval: "+str(interval)+" days")2
+    # plt.subplot(212)
+    # volume_line, = plt.plot(plotxticks,plotvolume,lw=2.5,label='Volume')
+    # #plt.show()
+    
+    ax1 = plt.subplot2grid((4, 4), (0, 0), colspan=4,rowspan=3)
+    ax2 = plt.subplot2grid((4, 4), (3, 0), colspan=4,rowspan=1)
+    start, end = ax2.get_xlim()
+    ax1.plot(plotxticks,plotSMAvalue,lw=2.5,label='Simple Moving Average')
+    ax1.plot(plotxticks,plotpricevalue,lw=2.5,label='Stock Price')
+    ax2.plot(plotxticks,plotvolume,lw=2.5,label='Volume')
+    ax2.legend(loc="upper right")
+    ax1.legend(loc="upper right")
+    ax2.xaxis.set_ticks(np.arange(start, end, interval//10))
     fig.autofmt_xdate(bottom=0.2, rotation=30, ha='right')
-    #plt.text(0.9, 0.9, stock, transform=ax.transAxes)
-    #ax.set_xlim(xmin=0,xmax=100)
-    #ax.set_ylim(ymin=ylow,ymax=yhigh)
-    plt.title("Tracking: "+stock+" Interval: "+str(interval)+" days")
-    #plt.show()
-
+    ax1.set_xticks([])
+    ax2.set_yticks([])
+    ax1.set_title("Tracking: "+stock+" Interval: "+str(interval)+" days")
 # def main():
 #     key=config.api_key
 #     #change this to get more/less data on plot

@@ -179,7 +179,7 @@ class StartPage(tk.Frame):
 
     def __init__(self, parent, controller):
         #input fields
-        field_defaults = 'GOOGL', '7'
+        field_defaults = 'GOOGL', '100'
 
         #make window
         self.create_window(parent, controller, stockinfo.fields, field_defaults)
@@ -196,7 +196,6 @@ class PlotPage(tk.Frame):
         btn_fetch.grid(row=1,column=1)
         btn_plot = ttk.Button(self,text="Plot Data",command=lambda: self.plotData())
         btn_plot.grid(row=1,column=2)
-        
         # data, SMAdata=StockScript.getData(interval,stock,key)
         # StockScript.plotData(data,SMAdata,stock,interval,fig)
 
