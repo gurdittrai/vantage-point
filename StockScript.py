@@ -93,8 +93,7 @@ def plotData(data,SMAdata,stock,interval,fig):
         if date<=SMAbreakdate:
             break
 
-    ax.set_xlabel("Time")
-    ax.set_ylabel("Value (USD)")
+
     pricex=[]
     pricey=[]
     volume=[]
@@ -132,17 +131,30 @@ def plotData(data,SMAdata,stock,interval,fig):
     
     ax1 = plt.subplot2grid((4, 4), (0, 0), colspan=4,rowspan=3)
     ax2 = plt.subplot2grid((4, 4), (3, 0), colspan=4,rowspan=1)
-    start, end = ax2.get_xlim()
+    
     ax1.plot(plotxticks,plotSMAvalue,lw=2.5,label='Simple Moving Average')
     ax1.plot(plotxticks,plotpricevalue,lw=2.5,label='Stock Price')
     ax2.plot(plotxticks,plotvolume,lw=2.5,label='Volume')
     ax2.legend(loc="upper right")
     ax1.legend(loc="upper right")
+    start, end = ax2.get_xlim()
     ax2.xaxis.set_ticks(np.arange(start, end, interval//10))
     fig.autofmt_xdate(bottom=0.2, rotation=30, ha='right')
+    #showing data annotation on hover
+    def on_plot_hover(event):
+        thisline = event.artist
+        xdata = thisline.get_xdata()
+        ydata = thisline.get_ydata()
+        ind = event.ind
+        print ('onpick points:', zip(xdata[ind], ydata[ind]))
+
+    fig.canvas.mpl_connect('motion_notify_event', on_plot_hover)  
     ax1.set_xticks([])
     ax2.set_yticks([])
+    ax2.set_xlabel("Date")
+    ax1.set_ylabel("Value (USD)")
     ax1.set_title("Tracking: "+stock+" Interval: "+str(interval)+" days")
+      
 # def main():
 #     key=config.api_key
 #     #change this to get more/less data on plot
