@@ -1,3 +1,4 @@
 # stock-analytics-api
-Utilizing the AlphaVantage API to acquire data on stocks and display that data using matplotlib
-Tkinter is used for the GUI and the matplotlib plot is embedded into the tkinter window
+This program utilizes the AlphaVantage API to acquire real time data on stock price, volume and simple moving average. 
+The data is then displayed using the matplotlib library. 
+This is all integrated in a simple Tkinter GUI to get user input on the interval of data displayed as well as the stock symbol.
