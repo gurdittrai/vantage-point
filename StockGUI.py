@@ -105,13 +105,13 @@ class StartPage(tk.Frame):
         #init stock
         stocks.addtolist(stockinfo(symbol, interval))
 
-        self.create_widget(symbol, interval)
+        #self.create_widget(symbol, interval)
         
         
 
     def create_window(self, parent, controller, fields, field_defaults):
         tk.Frame.__init__(self, parent)
-        label = tk.Label(self,text="Test Page",font=LARGE_FONT)
+        label = tk.Label(self,text="Home",font=LARGE_FONT)
         btn_plot = ttk.Button(self,text="Plot",command=lambda: controller.show_frame(PlotPage))
         btn_exit = ttk.Button(self,text="Exit",command=lambda: exit(1))
 

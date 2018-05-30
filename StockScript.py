@@ -113,42 +113,20 @@ def plotData(data,SMAdata,stock,interval,fig):
     plotSMAvalue=SMAvalue[::-1]
     plotpricevalue=pricey[::-1]
     plotvolume=volume[::-1]
-    #This is the actual plotting and formatting section
-    # plt.subplot(211)
-    # SMAline, = plt.plot(plotxticks,plotSMAvalue,lw=2.5,label='Simple Moving Average')
-    # priceline, = plt.plot(plotxticks,plotpricevalue,lw=2.5,label='Stock Price')
-    # plt.legend(handles=[SMAline,priceline])
-    # start, end = ax.get_xlim()
-    # ax.xaxis.set_ticks(np.arange(start, end, interval//10))
-    # fig.autofmt_xdate(bottom=0.2, rotation=30, ha='right')
-    # #plt.text(0.9, 0.9, stock, transform=ax.transAxes)
-    # #ax.set_xlim(xmin=0,xmax=100)
-    # #ax.set_ylim(ymin=ylow,ymax=yhigh)
-    # plt.title("Tracking: "+stock+" Interval: "+str(interval)+" days")2
-    # plt.subplot(212)
-    # volume_line, = plt.plot(plotxticks,plotvolume,lw=2.5,label='Volume')
-    # #plt.show()
+
     
     ax1 = plt.subplot2grid((4, 4), (0, 0), colspan=4,rowspan=3)
     ax2 = plt.subplot2grid((4, 4), (3, 0), colspan=4,rowspan=1)
     
-    ax1.plot(plotxticks,plotSMAvalue,lw=2.5,label='Simple Moving Average')
-    ax1.plot(plotxticks,plotpricevalue,lw=2.5,label='Stock Price')
-    ax2.plot(plotxticks,plotvolume,lw=2.5,label='Volume')
+    SMAline, =ax1.plot(plotxticks,plotSMAvalue,lw=2.5,label='Simple Moving Average')
+    priceline, =ax1.plot(plotxticks,plotpricevalue,lw=2.5,label='Stock Price')
+    volumeline, =ax2.plot(plotxticks,plotvolume,lw=2.5,label='Volume')
     ax2.legend(loc="upper right")
     ax1.legend(loc="upper right")
     start, end = ax2.get_xlim()
     ax2.xaxis.set_ticks(np.arange(start, end, interval//10))
     fig.autofmt_xdate(bottom=0.2, rotation=30, ha='right')
-    #showing data annotation on hover
-    def on_plot_hover(event):
-        thisline = event.artist
-        xdata = thisline.get_xdata()
-        ydata = thisline.get_ydata()
-        ind = event.ind
-        print ('onpick points:', zip(xdata[ind], ydata[ind]))
 
-    fig.canvas.mpl_connect('motion_notify_event', on_plot_hover)  
     ax1.set_xticks([])
     ax2.set_yticks([])
     ax2.set_xlabel("Date")
