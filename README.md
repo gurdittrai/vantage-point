@@ -1,4 +1,4 @@
-# stock-analytics-api
+# vantage-point
 This program utilizes the AlphaVantage API to acquire real time data on stock price, volume and simple moving average. 
 
 The data is then displayed using the matplotlib library. 
